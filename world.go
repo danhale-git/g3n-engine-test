@@ -29,6 +29,9 @@ func InitWorld(a *app.Application) (scene *core.Node, cam *camera.Camera) {
 	// Set the scene to be managed by the gui manager
 	gui.Manager().Set(scene)
 
+	// Player movement user unput
+	a.Subscribe(window.OnKeyDown, MovePlayer)
+
 	return
 }
 

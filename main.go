@@ -3,10 +3,16 @@ package main
 import (
 	"time"
 
+	"github.com/g3n/engine/math32"
+
 	"github.com/g3n/engine/app"
+	"github.com/g3n/engine/core"
 	"github.com/g3n/engine/gls"
 	"github.com/g3n/engine/renderer"
 )
+
+// Player is the player object
+var Player *core.Node
 
 func main() {
 
@@ -14,7 +20,9 @@ func main() {
 	a := app.App()
 	scene, cam := InitWorld(a)
 
-	scene.Add(ImportModel())
+	//	Add a model to the scene from a .obj file
+	Player = ImportModel()
+	scene.Add(Player)
 
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
@@ -29,4 +37,7 @@ func main() {
 }
 
 func update() {
+	// Move the model along the Z axis
+	var pos math32.Vector3 = Player.Position()
+	Player.SetPosition(pos.X, pos.Y, pos.Z+0.01)
 }
