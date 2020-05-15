@@ -14,6 +14,8 @@ func main() {
 	a := app.App()
 	scene, cam := InitWorld(a)
 
+	scene.Add(ImportModel())
+
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
 

@@ -23,13 +23,11 @@ func InitWorld(a *app.Application) (scene *core.Node, cam *camera.Camera) {
 	// Create debug widgets
 	initDebug(scene)
 
-	// Set background color to gray
-	a.Gls().ClearColor(0.5, 0.5, 0.5, 1.0)
+	// Set background color to blue
+	a.Gls().ClearColor(0.5, 0.7, 0.8, 1.0)
 
 	// Set the scene to be managed by the gui manager
 	gui.Manager().Set(scene)
-
-	scene.Add(Plane(1, 1))
 
 	return
 }
