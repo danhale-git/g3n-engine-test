@@ -6,7 +6,7 @@ import (
 )
 
 // ImportModel imports a model file into the scene
-func ImportModel() (group *core.Node) {
+func importModel() (group *core.Node) {
 	// Decode model in in OBJ format
 	dec, err := obj.Decode("submarine.obj", "submarine.mtl")
 	if err != nil {

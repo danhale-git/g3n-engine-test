@@ -4,38 +4,13 @@ import (
 	"github.com/g3n/engine/app"
 	"github.com/g3n/engine/camera"
 	"github.com/g3n/engine/core"
-	"github.com/g3n/engine/gui"
 	"github.com/g3n/engine/light"
 	"github.com/g3n/engine/math32"
 	"github.com/g3n/engine/util/helper"
 	"github.com/g3n/engine/window"
 )
 
-// InitWorld creates a new scene with camera and lighting
-func InitWorld(a *app.Application) (scene *core.Node, cam *camera.Camera) {
-	// Create scene and camera
-	scene = core.NewNode()
-	cam = initCamera(scene, a)
-
-	// Create lighting
-	initLighting(scene)
-
-	// Create debug widgets
-	initDebug(scene)
-
-	// Set background color to blue
-	a.Gls().ClearColor(0.5, 0.7, 0.8, 1.0)
-
-	// Set the scene to be managed by the gui manager
-	gui.Manager().Set(scene)
-
-	// Player movement user unput
-	a.Subscribe(window.OnKeyDown, MovePlayer)
-
-	return
-}
-
-func initCamera(scene *core.Node, a *app.Application) (cam *camera.Camera) {
+func createCamera(scene *core.Node, a *app.Application) (cam *camera.Camera) {
 	// Create perspective camera
 	cam = camera.New(1)
 	cam.SetPosition(0, 0, 3)
@@ -58,7 +33,7 @@ func initCamera(scene *core.Node, a *app.Application) (cam *camera.Camera) {
 	return
 }
 
-func initLighting(scene *core.Node) {
+func createLighting(scene *core.Node) {
 	// Create and add lights to the scene
 	scene.Add(light.NewAmbient(&math32.Color{R: 1.0, G: 1.0, B: 1.0}, 0.8))
 	pointLight := light.NewPoint(&math32.Color{R: 1, G: 1, B: 1}, 5.0)
@@ -66,7 +41,7 @@ func initLighting(scene *core.Node) {
 	scene.Add(pointLight)
 }
 
-func initDebug(scene *core.Node) {
+func createDebugWidgets(scene *core.Node) {
 	// Create and add an axis helper to the scene
 	scene.Add(helper.NewAxes(0.5))
 }

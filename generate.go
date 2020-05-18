@@ -9,7 +9,7 @@ import (
 )
 
 // Plane returns a new flat plane with given width and length
-func Plane(width, length float32) *graphic.Mesh {
+func plane(width, length float32) *graphic.Mesh {
 	// Create a list of vertices
 	positions := math32.NewArrayF32(0, 0)
 
