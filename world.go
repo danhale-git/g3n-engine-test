@@ -60,8 +60,8 @@ func initCamera(scene *core.Node, a *app.Application) (cam *camera.Camera) {
 
 func initLighting(scene *core.Node) {
 	// Create and add lights to the scene
-	scene.Add(light.NewAmbient(&math32.Color{1.0, 1.0, 1.0}, 0.8))
-	pointLight := light.NewPoint(&math32.Color{1, 1, 1}, 5.0)
+	scene.Add(light.NewAmbient(&math32.Color{R: 1.0, G: 1.0, B: 1.0}, 0.8))
+	pointLight := light.NewPoint(&math32.Color{R: 1, G: 1, B: 1}, 5.0)
 	pointLight.SetPosition(1, 0, 2)
 	scene.Add(pointLight)
 }
