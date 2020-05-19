@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/g3n/engine/gui"
@@ -14,7 +15,7 @@ import (
 )
 
 // Player is the player object
-var Player *core.Node
+//var Player *core.Node
 
 func main() {
 
@@ -37,18 +38,15 @@ func main() {
 	// Set the scene to be managed by the gui manager
 	gui.Manager().Set(scene)
 
-	//	Add a model to the scene from a .obj file
-	Player = importModel()
-	scene.Add(Player)
-
-	// Player movement user unput
-	a.Subscribe(window.OnKeyDown, movePlayer)
+	// Add a model to the scene from a .obj file
+	var player *core.Node = importModel()
+	scene.Add(player)
 
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
 
 		//	Call update once per frame
-		update()
+		update(*a.KeyState(), player)
 
 		// Render
 		a.Gls().Clear(gls.DEPTH_BUFFER_BIT | gls.STENCIL_BUFFER_BIT | gls.COLOR_BUFFER_BIT)
@@ -56,8 +54,25 @@ func main() {
 	})
 }
 
-func update() {
+func update(ks window.KeyState, player *core.Node) {
+	// Move player based on which keys are pressed
+	movePlayer(ks, player)
+}
+
+func movePlayer(keyState window.KeyState, player *core.Node) {
+
 	// Move the model along the Z axis
-	var pos math32.Vector3 = Player.Position()
-	Player.SetPosition(pos.X, pos.Y, pos.Z+0.01)
+	var pos math32.Vector3 = player.Position()
+	player.SetPosition(pos.X, pos.Y, pos.Z-0.01)
+
+	switch {
+	case keyState.Pressed(window.KeyA):
+		fmt.Println(player.Direction(), player.Position())
+		player.RotateY(0.1)
+	case keyState.Pressed(window.KeyD):
+		player.RotateY(-0.1)
+		//TODO: Move forward and backward, see: https://github.com/g3n/g3nd/blob/4a8cdd403c411cd2acb0e62c61828fd073bef340/demos/other/tank.go#L102
+	}
+
+	keyState.Dispose()
 }
