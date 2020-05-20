@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/g3n/engine/gui"
@@ -17,14 +16,16 @@ import (
 // Player is the player object
 //var Player *core.Node
 
+var application *app.Application
+
 func main() {
 
 	// Create application
-	a := app.App()
+	application = app.App()
 
 	// Create scene and camera
 	scene := core.NewNode()
-	cam := createCamera(scene, a)
+	cam := createCamera(scene, application)
 
 	// Create lighting
 	createLighting(scene)
@@ -33,7 +34,7 @@ func main() {
 	createDebugWidgets(scene)
 
 	// Set background color to blue
-	a.Gls().ClearColor(0.5, 0.7, 0.8, 1.0)
+	application.Gls().ClearColor(0.5, 0.7, 0.8, 1.0)
 
 	// Set the scene to be managed by the gui manager
 	gui.Manager().Set(scene)
@@ -43,36 +44,53 @@ func main() {
 	scene.Add(player)
 
 	// Run the application
-	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
+	application.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
 
 		//	Call update once per frame
-		update(*a.KeyState(), player)
+		update(player, deltaTime)
 
 		// Render
-		a.Gls().Clear(gls.DEPTH_BUFFER_BIT | gls.STENCIL_BUFFER_BIT | gls.COLOR_BUFFER_BIT)
+		application.Gls().Clear(gls.DEPTH_BUFFER_BIT | gls.STENCIL_BUFFER_BIT | gls.COLOR_BUFFER_BIT)
 		renderer.Render(scene, cam)
 	})
 }
 
-func update(ks window.KeyState, player *core.Node) {
+func update(player *core.Node, deltaTime time.Duration) {
 	// Move player based on which keys are pressed
-	movePlayer(ks, player)
+	movePlayer(player, deltaTime)
 }
 
-func movePlayer(keyState window.KeyState, player *core.Node) {
+func movePlayer(player *core.Node, deltaTime time.Duration) {
 
-	// Move the model along the Z axis
-	var pos math32.Vector3 = player.Position()
-	player.SetPosition(pos.X, pos.Y, pos.Z-0.01)
+	keyState := application.KeyState()
 
-	switch {
-	case keyState.Pressed(window.KeyA):
-		fmt.Println(player.Direction(), player.Position())
-		player.RotateY(0.1)
-	case keyState.Pressed(window.KeyD):
-		player.RotateY(-0.1)
-		//TODO: Move forward and backward, see: https://github.com/g3n/g3nd/blob/4a8cdd403c411cd2acb0e62c61828fd073bef340/demos/other/tank.go#L102
+	if keyState.Pressed(window.KeyA) {
+		player.RotateY(float32(deltaTime.Seconds()))
+	}
+
+	if keyState.Pressed(window.KeyD) {
+		player.RotateY(float32(-deltaTime.Seconds()))
+	}
+
+	if keyState.Pressed(window.KeyW) {
+		forward := nodeForward(player, deltaTime)
+		newPosition := player.Position()
+		newPosition.Add(forward)
+		player.SetPositionVec(&newPosition)
+	}
+
+	if keyState.Pressed(window.KeyS) {
+		forward := nodeForward(player, deltaTime)
+		newPosition := player.Position()
+		newPosition.Add(forward.Negate())
+		player.SetPositionVec(&newPosition)
 	}
 
 	keyState.Dispose()
+}
+
+func nodeForward(n *core.Node, deltaTime time.Duration) *math32.Vector3 {
+	var d *math32.Vector3 = &math32.Vector3{}
+	n.WorldDirection(d)
+	return d.MultiplyScalar(float32(deltaTime.Seconds()))
 }
