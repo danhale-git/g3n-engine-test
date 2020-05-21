@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/g3n/engine/gui"
-	"github.com/g3n/engine/math32"
 	"github.com/g3n/engine/window"
 
 	"github.com/g3n/engine/app"
@@ -64,33 +63,37 @@ func movePlayer(player *core.Node, deltaTime time.Duration) {
 
 	keyState := application.KeyState()
 
+	delta := float32(deltaTime.Seconds())
+
+	// Turn left
 	if keyState.Pressed(window.KeyA) {
-		player.RotateY(float32(deltaTime.Seconds()))
+		player.RotateY(delta)
 	}
 
+	// Turn right
 	if keyState.Pressed(window.KeyD) {
-		player.RotateY(float32(-deltaTime.Seconds()))
+		player.RotateY(-delta)
 	}
 
+	// Forward
 	if keyState.Pressed(window.KeyW) {
-		forward := nodeForward(player, deltaTime)
-		newPosition := player.Position()
-		newPosition.Add(forward)
-		player.SetPositionVec(&newPosition)
+		player.TranslateZ(delta)
 	}
 
+	// Backward
 	if keyState.Pressed(window.KeyS) {
-		forward := nodeForward(player, deltaTime)
-		newPosition := player.Position()
-		newPosition.Add(forward.Negate())
-		player.SetPositionVec(&newPosition)
+		player.TranslateZ(-delta)
+	}
+
+	// Up
+	if keyState.Pressed(window.KeySpace) {
+		player.TranslateY(delta)
+	}
+
+	// Down
+	if keyState.Pressed(window.KeyLeftControl) {
+		player.TranslateY(-delta)
 	}
 
 	keyState.Dispose()
-}
-
-func nodeForward(n *core.Node, deltaTime time.Duration) *math32.Vector3 {
-	var d *math32.Vector3 = &math32.Vector3{}
-	n.WorldDirection(d)
-	return d.MultiplyScalar(float32(deltaTime.Seconds()))
 }
